@@ -31,9 +31,6 @@ function Login() {
   } = useMutation({
     mutationFn: async ({ username, password }: FormInputs) => {
       try {
-        console.log("Login attempt with:", { username }); // Debug log
-        console.log("Using API URL:", axiosConfig.defaults.baseURL); // Debug log
-
         const res = await axiosConfig.post(
           "/api/auth/login",
           {
@@ -52,13 +49,10 @@ function Login() {
         queryClient.invalidateQueries({ queryKey: ["authUser"] });
         return res.data;
       } catch (error) {
-        console.log("Login error:", error);
-
         if (isAxiosError(error)) {
           const errorMsg = error.response?.data?.message || "Server is not responding";
           toast.error(errorMsg);
         } else {
-          console.error(error);
           toast.error("An unexpected error occurred");
         }
         return;

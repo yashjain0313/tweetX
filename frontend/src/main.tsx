@@ -5,7 +5,6 @@ import "./index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ThemeEnforcer from "./components/ThemeEnforcer";
 
-// Force the theme to be "black"
 document.documentElement.setAttribute("data-theme", "black");
 
 const queryClient = new QueryClient({
