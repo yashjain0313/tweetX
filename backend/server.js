@@ -22,18 +22,68 @@ v2.config({
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// CORS configuration
+// Enhanced CORS configuration to handle origins with and without trailing slashes
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  origin: function (origin, callback) {
+    // For development/testing - allow requests with no origin
+    if (!origin) return callback(null, true);
+
+    // Remove trailing slashes from origins for comparison
+    const requestOrigin = origin.endsWith("/") ? origin.slice(0, -1) : origin;
+
+    // List of allowed origins (without trailing slashes)
+    const allowedOrigins = [
+      process.env.FRONTEND_URL
+        ? process.env.FRONTEND_URL.endsWith("/")
+          ? process.env.FRONTEND_URL.slice(0, -1)
+          : process.env.FRONTEND_URL
+        : null,
+      "http://localhost:5173",
+      "https://tweet-x-tweet.vercel.app",
+      "https://tweetx-git-main-yashjain.vercel.app",
+      "https://tweetx-yashjain.vercel.app",
+      "https://tweetx-beige.vercel.app",
+    ].filter(Boolean); // Remove any null/undefined entries
+
+    console.log("Request origin:", origin);
+    console.log("Allowed origins:", allowedOrigins);
+
+    if (allowedOrigins.includes(requestOrigin)) {
+      // Return the actual requesting origin to avoid CORS issues
+      callback(null, origin);
+    } else {
+      console.log(`CORS blocked origin: ${origin}`);
+      callback(new Error(`CORS not allowed for origin: ${origin}`));
+    }
+  },
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
 };
 
+// Apply CORS middleware
 app.use(cors(corsOptions));
+
+// Handle preflight requests
+app.options("*", cors(corsOptions));
+
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// Set SameSite and Secure cookie options for cross-domain requests
+app.use((req, res, next) => {
+  const originalCookie = res.cookie;
+  res.cookie = function (name, value, options = {}) {
+    // For production environments, ensure cookies work cross-domain
+    if (process.env.NODE_ENV === "production") {
+      options.sameSite = "None";
+      options.secure = true;
+    }
+    return originalCookie.call(this, name, value, options);
+  };
+  next();
+});
 
 // Routes
 app.use("/api/auth", authRoutes);
