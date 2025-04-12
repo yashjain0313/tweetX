@@ -9,7 +9,8 @@ import { FaUser } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { Link } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios, { isAxiosError } from "axios";
+import axiosConfig from "../../utils/axios/axiosConfig"; // Import your configured axios instance
+import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 import { auth, googleProvider } from "../../utils/firebase/firebase";
 import { signInWithPopup } from "firebase/auth";
@@ -34,7 +35,10 @@ const Signup = () => {
   const { mutate, isError, isPending, error } = useMutation({
     mutationFn: async ({ email, username, fullname, password }: FormInput) => {
       try {
-        const res = await axios.post(
+        console.log("Signup attempt with:", { username, email }); // Debug log
+        console.log("Using API URL:", axiosConfig.defaults.baseURL); // Debug log
+
+        const res = await axiosConfig.post(
           "/api/auth/signup",
           {
             email,
@@ -53,10 +57,11 @@ const Signup = () => {
         queryClient.invalidateQueries({ queryKey: ["authUser"] });
         return res.data;
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const errorMsg = isAxiosError(error)
-            ? error.response?.data?.message
-            : "Server is not responding";
+        console.log("Signup error:", error);
+
+        if (isAxiosError(error)) {
+          const errorMsg =
+            error.response?.data?.message || "Server is not responding";
           toast.error(errorMsg);
         } else {
           console.error(error);
@@ -77,7 +82,7 @@ const Signup = () => {
         profileImg: string;
       }) => {
         try {
-          const res = await axios.post("/api/auth/google", userData, {
+          const res = await axiosConfig.post("/api/auth/google", userData, {
             headers: {
               "Content-Type": "application/json",
             },
@@ -87,12 +92,11 @@ const Signup = () => {
           queryClient.invalidateQueries({ queryKey: ["authUser"] });
           return res.data;
         } catch (error) {
-          console.log(error);
+          console.log("Google signup error:", error);
 
-          if (axios.isAxiosError(error)) {
-            const errorMsg = isAxiosError(error)
-              ? error.response?.data?.message
-              : "Server is not responding";
+          if (isAxiosError(error)) {
+            const errorMsg =
+              error.response?.data?.message || "Server is not responding";
             toast.error(errorMsg);
           } else {
             console.error(error);

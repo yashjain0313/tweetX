@@ -3,7 +3,8 @@ import XSvg from "../../components/X";
 import { MdOutlineMail, MdPassword } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios, { isAxiosError } from "axios";
+import axiosConfig from "../../utils/axios/axiosConfig"; // Import your configured axios instance
+import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
 import { auth, googleProvider } from "../../utils/firebase/firebase";
@@ -30,7 +31,10 @@ function Login() {
   } = useMutation({
     mutationFn: async ({ username, password }: FormInputs) => {
       try {
-        const res = await axios.post(
+        console.log("Login attempt with:", { username }); // Debug log
+        console.log("Using API URL:", axiosConfig.defaults.baseURL); // Debug log
+
+        const res = await axiosConfig.post(
           "/api/auth/login",
           {
             username,
@@ -48,12 +52,10 @@ function Login() {
         queryClient.invalidateQueries({ queryKey: ["authUser"] });
         return res.data;
       } catch (error) {
-        console.log(error);
+        console.log("Login error:", error);
 
-        if (axios.isAxiosError(error)) {
-          const errorMsg = isAxiosError(error)
-            ? error.response?.data?.message
-            : "Server is not responding";
+        if (isAxiosError(error)) {
+          const errorMsg = error.response?.data?.message || "Server is not responding";
           toast.error(errorMsg);
         } else {
           console.error(error);
@@ -74,7 +76,7 @@ function Login() {
         profileImg: string;
       }) => {
         try {
-          const res = await axios.post("/api/auth/google", userData, {
+          const res = await axiosConfig.post("/api/auth/google", userData, {
             headers: {
               "Content-Type": "application/json",
             },
@@ -85,10 +87,8 @@ function Login() {
         } catch (error) {
           console.log(error);
 
-          if (axios.isAxiosError(error)) {
-            const errorMsg = isAxiosError(error)
-              ? error.response?.data?.message
-              : "Server is not responding";
+          if (isAxiosError(error)) {
+            const errorMsg = error.response?.data?.message || "Server is not responding";
             toast.error(errorMsg);
           } else {
             console.error(error);
