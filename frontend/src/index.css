@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Force dark theme styles */
+:root {
+  color-scheme: dark;
+}
+
+/* Enforce black theme for the entire app */
+html {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+/* Make sure the html element always has the black theme */
+html[data-theme="black"] {
+  background-color: #000000 !important;
+}
