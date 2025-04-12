@@ -16,4 +16,30 @@ html {
 /* Make sure the html element always has the black theme */
 html[data-theme="black"] {
   background-color: #000000 !important;
+  --p: 212 100% 52%; /* Primary color - rgb(29,155,240) */
+  --s: 0 0% 9.4%; /* Secondary color - rgb(24,24,24) */
+  color-scheme: dark;
+}
+
+/* Force dark backgrounds on key elements */
+body,
+.bg-base-100,
+[class*="bg-base-"] {
+  background-color: #000000 !important;
+}
+
+/* Ensure text colors */
+.text-base-content {
+  color: #ffffff !important;
+}
+
+/* Ensure DaisyUI components get proper styling */
+.btn-primary {
+  background-color: rgb(29, 155, 240) !important;
+  border-color: rgb(29, 155, 240) !important;
+}
+
+.btn-secondary {
+  background-color: rgb(24, 24, 24) !important;
+  border-color: rgb(24, 24, 24) !important;
 }

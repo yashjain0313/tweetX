@@ -1,12 +1,17 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="black">
+<html lang="en" data-theme="black" class="dark">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>tweetX</title>
+    <script>
+      // Ensure theme is set immediately to prevent flash of unstyled content
+      document.documentElement.setAttribute("data-theme", "black");
+      document.documentElement.classList.add("dark");
+    </script>
   </head>
-  <body>
+  <body class="bg-black text-white">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
