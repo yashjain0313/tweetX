@@ -40,9 +40,7 @@ const corsOptions = {
         : null,
       "http://localhost:5173",
       "https://tweet-x-tweet.vercel.app",
-      "https://tweetx-git-main-yashjain.vercel.app",
-      "https://tweetx-yashjain.vercel.app",
-      "https://tweetx-beige.vercel.app",
+
     ].filter(Boolean); // Remove any null/undefined entries
 
     console.log("Request origin:", origin);
