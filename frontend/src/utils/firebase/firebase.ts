@@ -2,15 +2,14 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 // Your web app's Firebase configuration
-// Replace these with your actual Firebase project config
 const firebaseConfig = {
-  apiKey: "AIzaSyAMWhm-zOqqb1-rrLx3oCOqzAjRqKrXBAc",
-  authDomain: "tweetx-1.firebaseapp.com",
-  projectId: "tweetx-1",
-  storageBucket: "tweetx-1.firebasestorage.app",
-  messagingSenderId: "325171751932",
-  appId: "1:325171751932:web:5450c7ed4032ebce8e6079",
-  measurementId: "G-P9WFZB4E8N"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+ measurementId: import.meta.env.VITE_MEASUREMENT_ID
 };
 
 // Initialize Firebase

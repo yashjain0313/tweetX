@@ -1,14 +1,15 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const cookieParser = require('cookie-parser');
-const {v2} = require("cloudinary");
-const path = require('path');
-const authRoutes = require('./route/auth');
-const userRoutes = require('./route/user');
+const express = require("express");
+const dotenv = require("dotenv");
+const cookieParser = require("cookie-parser");
+const { v2 } = require("cloudinary");
+const path = require("path");
+const cors = require("cors");
+const authRoutes = require("./route/auth");
+const userRoutes = require("./route/user");
 
-const connectMongoDB = require('./db/connectMongoDB');
-const postRoutes = require('./route/post');
-const notificationsRoutes = require('./route/notification');
+const connectMongoDB = require("./db/connectMongoDB");
+const postRoutes = require("./route/post");
+const notificationsRoutes = require("./route/notification");
 
 dotenv.config();
 
@@ -21,23 +22,32 @@ v2.config({
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json({limit: "5mb"}));    
+// CORS configuration
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/posts", postRoutes);
+app.use("/api/notifications", notificationsRoutes);
 
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/posts', postRoutes);
-app.use('/api/notifications', notificationsRoutes);
-
-
-if(process.env.NODE_ENV.trim() === "production"){
-  const parentDir = path.resolve(__dirname, '..');
+// Serve static assets if in production
+if (process.env.NODE_ENV.trim() === "production") {
+  const parentDir = path.resolve(__dirname, "..");
   app.use(express.static(path.join(parentDir, "/frontend/dist")));
 
-  app.get("*", (req,res)=>{
-    res.sendFile(path.resolve(parentDir, "frontend","dist","index.html"));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(parentDir, "frontend", "dist", "index.html"));
   });
 }
 
