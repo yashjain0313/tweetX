@@ -1,6 +1,6 @@
 # tweetX website
 
-It's a twitter clone make using MERN stack using TypeScript.
+It's a twitter clone made using MERN stack with TypeScript.
 
 ## Functionality and Features
 
