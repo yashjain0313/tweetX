@@ -41,8 +41,14 @@ app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/notifications", notificationsRoutes);
 
+// Improved environment check that works across platforms
+const isProduction =
+  process.env.NODE_ENV &&
+  (process.env.NODE_ENV.trim() === "production" ||
+    process.env.NODE_ENV.includes("prod"));
+
 // Serve static assets if in production
-if (process.env.NODE_ENV.trim() === "production") {
+if (isProduction) {
   const parentDir = path.resolve(__dirname, "..");
   app.use(express.static(path.join(parentDir, "/frontend/dist")));
 
@@ -52,6 +58,10 @@ if (process.env.NODE_ENV.trim() === "production") {
 }
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(
+    `Server running on port ${PORT} in ${
+      process.env.NODE_ENV || "development"
+    } mode`
+  );
   connectMongoDB();
 });
